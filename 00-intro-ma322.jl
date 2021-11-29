@@ -160,7 +160,7 @@ Now, we're going to use a numerical solver to solve the IVP problem above.
 
 # ╔═╡ 447e3494-7492-4792-b454-b53c76147f34
 # the next line produces a numerical solution (not a formula!) for the IVP
-sol = solve(prob) # timestep at which the output should be recorded
+sol = solve(prob, Tsit5()) # Tsit() is the numerical algorithm used to solve the IVP
 
 
 # ╔═╡ 720179c9-1f32-4cf7-a10f-e09d3a081fa3
@@ -175,10 +175,11 @@ md"""
 
 ## Producing a graph of the results
 
-Now, let's plot this using the Makie.jl plotting library. ( [Pronounced `maky-eh`](https://www.lexico.com/en/definition/maki-e))
+Now, let's plot this using the `Plots.jl` plotting library. Unlike MATLAB, Julia has at least two dominant plotting libraries (`Plots.jl` and `Makie.jl`) so you can choose which one you want to work with in general. Creators of `DifferentialEquations.jl` have produced several shortcuts to plotting solutions of ODEs using `Plots.jl` so that's what we will use.
 
+First, we're going to define the plotting engine (GR - although you may want to [try out others](https://docs.juliaplots.org/latest/backends/) ) and then set the overall visual look of figures.
 
-First, we're going to define the plotting engine (Cairo) and then set the overall visual look of figures.
+You can replace `:solarized_light` with some other theme. Here's [the gallery](https://docs.juliaplots.org/latest/generated/plotthemes/).
 """
 
 
@@ -186,13 +187,16 @@ First, we're going to define the plotting engine (Cairo) and then set the overal
 # ╔═╡ 4bb6614c-8557-421d-96b8-57ecf2c9be86
 begin
 	gr()	
+	theme(:solarized_light) 
 end
 
 # ╔═╡ b1ac4ee4-e23b-4122-8f46-5edb07d30711
 md"""
 Now, we'll create the traces for variables S, I, R.
 
-The first command below creates the figure (overall container), axes (that hold labels), and the plot (the actual line) variables. We will store them into named variables so we can modify/invoke them later. For throwaway plots, we could have just started the command with `lines(...`.
+The first command below creates the figure that we store into the `SIR_graph` variable. 
+
+`vars=(...)` selects (a pair of) variables plotted. Time is given index `0` while others are as specified in the `SIRfun` function.
 """
 
 # ╔═╡ a5c46d36-2b3c-4ab5-97dd-1a75a351ca09
@@ -211,7 +215,7 @@ SIR_graph
 
 # ╔═╡ 5a41de52-97dd-48ad-a610-b0846c15c172
 md"""
->Notice the exclamations after second and third invocation of `lines`. In Julia, such commands typically modify a current variable (rather than generating output from scratch). In this case, once the first `lines` command generates our plot,  we add traces to it using the exclamation-point form of the plotting command. Think of this as `hold on` in MATLAB, if you're MATLAB-fluent
+>Notice the exclamations after second and third invocation of `plot`. In Julia, such commands typically modify a current variable (rather than generating output from scratch). In this case, once the first `plot` command generates our plot,  we add traces to it using the exclamation-point form of the plotting command. Think of this as `hold on` in MATLAB, if you're MATLAB-fluent
 """
 
 # ╔═╡ 1666b6cc-506e-40fa-abb4-36ee02a94943
@@ -224,7 +228,8 @@ begin
 	# annotations are added to the axis
 	xlabel!("Time")
 	ylabel!("Count of individuals")
-	
+
+	ylims!(0,p[3])
 	
 end;
 
@@ -236,9 +241,7 @@ we invoked `SIR_graph` after the text containing sliders, it was able to
 display something. Remember, in Pluto.jl notebooks, order of commands 
 more-or-less doesn't matter.
 
-There are several plotting systems for Julia, `Plots.jl` being the other (non-Makie) dominant one. The community is seemingly shifting toward Makie as the long-term solution, so I will try to use it exclusively in this course. 
-If you'd like to read more about it at this moment, here's an excellent starting point:
-[Makie first steps](https://makie.juliaplots.org/dev/#first_steps)
+There is lots to explore regarding plotting. This is a good starting point: [Plots.jl tutorial](https://docs.juliaplots.org/latest/tutorial/)
 
 Here's the graph again, just for good measure.
 """
@@ -293,10 +296,6 @@ Almost nobody today does math *without* computers, and computing environments ch
 
 
 """
-
-# ╔═╡ 314fbaac-c4a5-45c7-b4fc-ffc7c2ae0581
-using PlotlyJS
-end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2025,7 +2024,6 @@ version = "0.9.1+5"
 # ╟─5c51a85c-9653-4239-80a8-6ecc85ba98b0
 # ╠═5b776303-ed17-42a3-ab62-54ac89d33b12
 # ╟─71efc202-d7cf-4023-a4e9-d1901e77d7e6
-# ╟─4f8a36e9-cd6a-4f77-8d30-4a775abae23f
-# ╠═314fbaac-c4a5-45c7-b4fc-ffc7c2ae0581
+# ╠═4f8a36e9-cd6a-4f77-8d30-4a775abae23f
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
